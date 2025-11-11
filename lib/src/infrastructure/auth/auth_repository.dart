@@ -99,7 +99,6 @@ class AuthRepository implements IAuthRepository {
           password: password.value.toOption().toNullable()!,
           firstName: firstName,
           lastName: lastName,
-          phone: phone,
         );
         localDataSource.cacheUser(result);
         return const Right(unit);

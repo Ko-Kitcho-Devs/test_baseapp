@@ -16,7 +16,6 @@ abstract class IAuthRemoteDataSource {
     required String password,
     required firstName,
     required lastName,
-    required phone,
   });
   Future<UserDto> updateUser({required String email, required String userId});
   Future<AuthResponseDto> login({
@@ -42,15 +41,13 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
     required String password,
     required firstName,
     required lastName,
-    required phone,
   }) async {
-    final String request = '${AppHttpService.baseUrl}/account/';
+    final String request = '${AppHttpService.baseUrl}/register';
     final body = {
       'email': email,
       'password': password,
       'first_name': firstName,
       'last_name': lastName,
-      'phone': phone,
     };
     final Response response = await httpClient.postRequest(request, body: body);
     return _performResponse(response);
@@ -61,7 +58,7 @@ class AuthRemoteDataSource implements IAuthRemoteDataSource {
     required String email,
     required String userId,
   }) async {
-    final String request = '${AppHttpService.baseUrl}/account/$userId/';
+    final String request = '${AppHttpService.baseUrl}/update/$userId/';
     final body = {'email': email};
     final Response response = await httpClient.patchRequest(
       request,
