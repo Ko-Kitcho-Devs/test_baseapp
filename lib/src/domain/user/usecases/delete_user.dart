@@ -1,14 +1,12 @@
+import '../repositories/user_repository.dart';
 
 
-import '../../../domain/user/repositories/user_repository.dart';
+class deleteUser {
+  final IUserRepository repository;
 
-/// UseCase : suppression d'un utilisateur
-class DeleteUser {
-  final UserRepository repository;
+  deleteUser(this.repository);
 
-  DeleteUser(this.repository);
-
-  Future<void> call(String id) {
+  Future<void> call({required String id}) async {
     return repository.deleteUser(id);
   }
 }

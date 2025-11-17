@@ -27,7 +27,7 @@ linter:
     depend_on_referenced_packages: true
     directives_ordering: true
     file_names: true
-    lines_longer_than_80_chars: true
+    lines_longer_than_80_chars: false
     no_duplicate_case_values: true
     prefer_relative_imports: true
     require_trailing_commas: true

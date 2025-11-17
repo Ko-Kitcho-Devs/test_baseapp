@@ -37,7 +37,10 @@ class _SplashPageState extends State<SplashPage> {
                   return;
                 }
                 if (state is Loaded) {
-                  AutoRouter.of(context).replace(state.route);
+                   AutoRouter.of(context).replace(state.route);
+                  // if (AutoRouter.of(context).current.name != state.route.routeName) {
+                  //   AutoRouter.of(context).replace(state.route);
+                  // }
                 }
               },
               child: const SplashBodyWidget(),

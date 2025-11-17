@@ -8,22 +8,25 @@ import 'src/application/auth/register/register_bloc.dart';
 import 'src/application/auth/resetPassword/resetpassword_bloc.dart';
 import 'src/application/connected/connected_bloc.dart';
 import 'src/application/splash/splash_bloc.dart';
+import 'src/application/user/user_bloc.dart';
 import 'src/domain/auth/_commons/i_auth_repository.dart';
+import 'src/domain/user/repositories/user_repository.dart';
+import 'src/domain/user/usecases/create_user.dart';
+import 'src/domain/user/usecases/delete_user.dart';
+import 'src/domain/user/usecases/getUser_byId.dart';
+import 'src/domain/user/usecases/get_allUsers.dart';
+import 'src/domain/user/usecases/update_user.dart';
 import 'src/infrastructure/_commons/network/app_requests.dart';
 import 'src/infrastructure/_commons/network/network_info.dart';
 import 'src/infrastructure/_commons/network/user_session.dart';
 import 'src/infrastructure/auth/auth_repository.dart';
 import 'src/infrastructure/auth/data_sources/auth_local_data_source.dart';
 import 'src/infrastructure/auth/data_sources/auth_remote_data_source.dart';
+import 'src/infrastructure/_commons/network/app_http_service.dart';
 
-import 'src/infrastructure/user/user_remote_data_source.dart';
-import 'src/infrastructure/user/user_repository_impl.dart';
-import 'src/application/user/users_bloc.dart';
-import 'src/domain/user/repositories/user_repository.dart';
-import 'src/domain/user/usecases/get_users.dart';
-import 'src/domain/user/usecases/create_user.dart';
-import 'src/domain/user/usecases/update_user.dart';
-import 'src/domain/user/usecases/delete_user.dart';
+import 'src/infrastructure/user/data_source/user_remote_data_source.dart';
+import 'src/infrastructure/user/user_repositoryImpl.dart';
+
 
 final sl = GetIt.instance;
 
@@ -32,24 +35,26 @@ Future<void> init() async {
   initSplashScreen();
   initAuth();
   initConnected();
-  // User Feature
-  final dio = Dio(BaseOptions(baseUrl: 'http://192.168.100.128:8000/api')); 
-sl.registerLazySingleton<Dio>(() => dio); // enregistre Dio
 
-// Remote data source - injecte Dio
-sl.registerLazySingleton<UserRemoteDataSource>(() => UserRemoteDataSource(client: sl()));
 
-// Repository - injecte le remote
-sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl(remote: sl()));
+sl.registerLazySingleton(() => Dio());
+sl.registerLazySingleton(() => AppHttpService.getInstance());
+sl.registerLazySingleton<IAppRequests>(() => AppRequests());
+sl.registerLazySingleton<IUserRemoteDataSource>(() => UserRemoteDataSource(httpClient: sl()));
 
-// UseCases 
-sl.registerLazySingleton(() => GetUsers(sl()));
-sl.registerLazySingleton(() => CreateUser(sl()));
+sl.registerLazySingleton<IUserRepository>(() => UserRepositoryImpl(remoteDataSource: sl()));
+
+sl.registerLazySingleton(() => getAllUsers(sl()));
+sl.registerLazySingleton(() => createUser(sl()));
 sl.registerLazySingleton(() => UpdateUser(sl()));
-sl.registerLazySingleton(() => DeleteUser(sl()));
+sl.registerLazySingleton(() => getUserById(sl()));
+sl.registerLazySingleton(() => deleteUser(sl()));
 
 
-sl.registerFactory(() => UsersBloc(repository: sl()));
+sl.registerFactory(() => UserBloc(
+  repository: sl(),
+  ));
+
 }
 
 void initSplashScreen() {
